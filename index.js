@@ -44,7 +44,7 @@ app.post('/tweets', (req, res) => {
         res.status(400).send('Todos os campos são obrigatórios!');
     } else {
         const tweet = {
-            username: USER.username,
+            username: req.header('user'),
             avatar: USER.avatar,
             tweet: body.tweet
         };
