@@ -1,42 +1,59 @@
-import express from 'express';
+import express, {json} from 'express';
 import chalk from 'chalk';
 import cors from 'cors';
 
 const app = express();
 
 app.use(cors());
+app.use(json());
 
-const USER = {
-	username: 'bobesponja', 
-	avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info" 
-};
-
-const tweet = {
-	username: "bobesponja",
-	avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
-    tweet: "eu amo o hub",
+let USER = {
+    username: null,
+    avatar: null
 };
 
 let USERS = [];
 
-let USER_TWEETS = [];
+const USER_TWEETS = [];
 
 app.post('/sign-up', (req, res) => {
-    USERS = [...USERS, USER]; // talvez resolver problema de postar mesmo usuario mais de uma vez
+    const {body} = req;
+
+    const newUser = {
+        username: body.username,
+        avatar: body.avatar
+    };
+    
+    USER = newUser;
+
+    USERS = [...USERS, newUser];
+
     res.send('OK');
 });
 
 app.post('/tweets', (req, res) => {
-    USER_TWEETS = [...USER_TWEETS, tweet];
+
+    const {body} = req;
+    
+    const tweet = {
+        username: body.username,
+        avatar: USER.avatar,
+        tweet: body.tweet
+    };
+
+    USER_TWEETS.push(tweet);
+
     res.send('OK');
 });
 
 app.get('/tweets', (req, res) => {
+    
     const lastTenTweets = [];
 
     // eslint-disable-next-line no-plusplus
-    for (let i = 0; (i < USER_TWEETS.length && i < 10); i++) {
-        lastTenTweets.push(USER_TWEETS[i]);
+    for (let i = USER_TWEETS.length - 1; i >= 0; i--) {
+        if (lastTenTweets.length > 10) break;
+        else lastTenTweets.push(USER_TWEETS[i]);
     }
 
     res.send(lastTenTweets);
