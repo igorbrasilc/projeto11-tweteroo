@@ -19,40 +19,50 @@ const USER_TWEETS = [];
 app.post('/sign-up', (req, res) => {
     const {body} = req;
 
-    const newUser = {
-        username: body.username,
-        avatar: body.avatar
-    };
+    if (body.username === '' || body.avatar === '') {
+        res.status(400).send('Todos os campos são obrigatórios!');
+    } else {
+        const newUser = {
+            username: body.username,
+            avatar: body.avatar
+        };
+        
+        USER = newUser;
     
-    USER = newUser;
+        USERS = [...USERS, newUser];
+    
+        res.status(201).send('OK');
+    }
 
-    USERS = [...USERS, newUser];
-
-    res.send('OK');
 });
 
 app.post('/tweets', (req, res) => {
 
     const {body} = req;
+
+    if (body.tweet === '') {
+        res.status(400).send('Todos os campos são obrigatórios!');
+    } else {
+        const tweet = {
+            username: USER.username,
+            avatar: USER.avatar,
+            tweet: body.tweet
+        };
     
-    const tweet = {
-        username: body.username,
-        avatar: USER.avatar,
-        tweet: body.tweet
-    };
-
-    USER_TWEETS.push(tweet);
-
-    res.send('OK');
+        USER_TWEETS.push(tweet);
+    
+        res.status(201).send('OK');
+    }
+    
 });
 
 app.get('/tweets', (req, res) => {
-    
+
     const lastTenTweets = [];
 
     // eslint-disable-next-line no-plusplus
     for (let i = USER_TWEETS.length - 1; i >= 0; i--) {
-        if (lastTenTweets.length > 10) break;
+        if (lastTenTweets.length === 10) break;
         else lastTenTweets.push(USER_TWEETS[i]);
     }
 
