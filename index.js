@@ -58,15 +58,19 @@ app.post('/tweets', (req, res) => {
 
 app.get('/tweets', (req, res) => {
 
-    const lastTenTweets = [];
+    const lastTweets = [];
+
+    const {page} = req.query;
+
+    if (page < 1) res.status(400).send('Informe uma página válida!');
 
     // eslint-disable-next-line no-plusplus
     for (let i = USERS_TWEETS.length - 1; i >= 0; i--) {
-        if (lastTenTweets.length === 10) break;
-        else lastTenTweets.push(USERS_TWEETS[i]);
+        if (lastTweets.length === 10 * page) break;
+        else lastTweets.push(USERS_TWEETS[i]);
     }
 
-    res.send(lastTenTweets);
+    res.send(lastTweets);
 });
 
 app.get('/tweets/:USERNAME', (req, res) => {
